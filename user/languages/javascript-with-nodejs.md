@@ -133,21 +133,57 @@ related source code can be found [here](https://github.com/arunoda/travis-ci-lai
 
 ## Meteor Packages
 
-It is also possible to build your **Meteor Packages** on Travis CI by extending the NodeJs configuration.
+It is also possible to build and test your **meteor packages** on Travis CI, by extending the node.js configuration. You can use one of the following two popular options:
 
-For example, you can use the following `.travis.yml` file .
+### Using practicalmeteor's spacejam npm package
 
-    language: node_js
-    node_js:
-      - "0.12"
-    before_install:
-      - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-meteor-packages/master/configure.sh | /bin/sh"
-    before_script:
-      - "export PATH=$HOME/.meteor:$PATH"
+[spacejam](https://www.npmjs.com/package/spacejam) is an npm package that tests your meteor packages from the command line, using phantomjs. Following is a sample `.travis.yml` that uses spacejam to test a meteor package repo:
+
+```
+# Use faster container based travis infrastructure
+sudo: false
+
+language: node_js
+
+node_js:
+  - "0.10.40"
+
+install:
+  # Install meteor
+  - "curl https://install.meteor.com | /bin/sh"
+  # Add meteor to path
+  - "export PATH=$HOME/.meteor:$PATH"
+  # Install spacejam
+  - "npm install -g spacejam"
+
+script:
+  # spacejam test-packages accepts the same arguments as meteor test-packages.
+  # This sample assumes the package is located in the repo root.
+  - "spacejam test-packages ./"
+```
+
+For more info on how to use spacejam, visit the [spacejam](https://www.npmjs.com/package/spacejam) npm package page on npmjs.com.
+
+### Using arunoda's travis ci build script
+
+Following is a sample `.travis.yml` that uses arunoda's travis ci script to test your meteor package(s) using phantomjs:
+
+```
+language: node_js
+
+node_js:
+  - "0.12"
+
+before_install:
+  - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-meteor-packages/master/configure.sh | /bin/sh"
+
+before_script:
+  - "export PATH=$HOME/.meteor:$PATH"
+```
 
 The `before_install` script will make sure the required dependencies are installed.
 
-The related source code can be found at the [travis-ci-meteor-packages](https://github.com/arunoda/travis-ci-meteor-packages) repository.
+The related source code, and configuration documentation, can be found at the [travis-ci-meteor-packages](https://github.com/arunoda/travis-ci-meteor-packages) repository.
 
 
 ## Build Matrix
